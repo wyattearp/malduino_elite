@@ -18,6 +18,15 @@
 #define ledPin 3
 #define blinkInterval 50
 
+void keyboardWrite(uint8_t c);
+void keyboardWriteString(String s);
+void echoFileHex(String sdFileName);
+void repeat(int times);
+void parseLine(String line);
+void parseKeys(String keys);
+void parseKey(String key);
+void searchAndRunScript();
+
 File payload;
 File fromSD;
 DipSwitch dip;
