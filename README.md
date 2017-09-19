@@ -1,6 +1,6 @@
 # malduino_elite
 ## A firmware for Malduino, see malduino.com
-cloned from kripthor
+cloned from kripthor (https://github.com/kripthor/malduino-elite)
 
 kudos to Seytonic and Spacehuhn
 

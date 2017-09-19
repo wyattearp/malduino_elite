@@ -13,6 +13,12 @@
 #include "DipSwitch.h"
 
 //#define DEBUG true // <-- uncomment to turn serial output on
+#ifdef DEBUG
+#define DEBUG_PRINT(x) Serial.println(x)
+#else
+#define DEBUG_PRINT(x)
+#endif
+
 #define CSPIN 4 //Chip-Select of the SD-Card reader
 #define ledPin 3
 #define blinkInterval 50
@@ -45,7 +51,7 @@ void keyboardWrite(uint8_t c)
 
 void keyboardWriteString(String s)
 {
-  for (int i = 0; i < s.length(); i++)
+  for (unsigned int i = 0; i < s.length(); i++)
     keyboardWrite(s.charAt(i));
 }
 
@@ -53,15 +59,11 @@ void keyboardWriteString(String s)
 //For example, in linux you can use ' echo -n -e "\xAA\xBB\XCC" > /tmp/file '
 void echoFileHex(String sdFileName)
 {
-#ifdef DEBUG
-  Serial.println("echoFileHex: Opening file '" + sdFileName + "'");
-#endif
+  DEBUG_PRINT("echoFileHex: Opening file '" + sdFileName + "'");
   fromSD = SD.open(sdFileName);
   if (!fromSD)
   {
-#ifdef DEBUG
-    Serial.println("echoFileHex: Couldn't find file: '" + sdFileName + "'");
-#endif
+    DEBUG_PRINT("echoFileHex: Couldn't find file: '" + sdFileName + "'");
     return;
   }
   else
@@ -127,9 +129,7 @@ void parseKeys(String keys)
   String nextKeys = keys;
   int p;
 
-#ifdef DEBUG
-  Serial.println("parseKeys: '" + nextKeys + "'");
-#endif
+  DEBUG_PRINT("parseKeys: '" + nextKeys + "'");
 
   nextKeys.trim();
   p = nextKeys.indexOf(" ");
@@ -138,9 +138,7 @@ void parseKeys(String keys)
     key = nextKeys.substring(0, p);
     nextKeys = nextKeys.substring(p + 1);
     key.trim();
-#ifdef DEBUG
-    Serial.println("Key: '" + key + "' Next:'" + nextKeys + "' p:" + String(p));
-#endif
+    DEBUG_PRINT("Key: '" + key + "' Next:'" + nextKeys + "' p:" + String(p));
     parseKey(key);
     p = nextKeys.indexOf(" ");
   }
@@ -150,10 +148,7 @@ void parseKeys(String keys)
 
 void parseKey(String key)
 {
-
-#ifdef DEBUG
-  Serial.println("parseKey: '" + key + "'");
-#endif
+  DEBUG_PRINT("parseKey: '" + key + "'");
 
   if (key.length() == 1)
     Keyboard.press(key.charAt(0));
@@ -251,31 +246,23 @@ void parseKey(String key)
     keyboardWrite(KEYPAD_PERIOD);
   else if (key.equals("NUM_PLUS"))
     keyboardWrite(KEYPAD_PLUS);
-
-#ifdef DEBUG
   else
-    Serial.println("parseKey: failed");
-#endif
+    DEBUG_PRINT("parseKey: failed");
 }
 
 void searchAndRunScript()
 {
-
   String scriptName = dip.getDipsString() + ".txt";
 
   payload = SD.open(scriptName);
   if (!payload)
   {
-#ifdef DEBUG
-    Serial.println("setup: not found '" + scriptName + "'");
-#endif
+    DEBUG_PRINT("setup: not found '" + scriptName + "'");
     return;
   }
   else
   {
-#ifdef DEBUG
-    Serial.println("setup: found script '" + scriptName + "'");
-#endif
+    DEBUG_PRINT("setup: found script '" + scriptName + "'");
 
     String line;
     Keyboard.begin();
@@ -300,23 +287,20 @@ void setup()
 #ifdef DEBUG
   Serial.begin(115200);
   delay(3000);
-  Serial.println("DEBUG started, press any key to init.");
+  DEBUG_PRINT("DEBUG started, press any key to init.");
   while (!(Serial.available() > 0))
     delay(100);
 #endif
 
   if (!SD.begin(CSPIN))
   {
-#ifdef DEBUG
-    Serial.println("setup: couldn't access sd-card");
-#endif
+    DEBUG_PRINT("setup: couldn't access sd-card");
     return;
   }
 }
 
 void loop()
 {
-
   //In the event that you can switch dips while connected to usb,
   //the malduino will execute the script of the new dip configuration
   if (lastDip != dip.getDips())
