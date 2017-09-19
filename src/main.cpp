@@ -52,7 +52,9 @@ void keyboardWrite(uint8_t c)
 void keyboardWriteString(String s)
 {
   for (unsigned int i = 0; i < s.length(); i++)
+  {
     keyboardWrite(s.charAt(i));
+  }
 }
 
 //Simple function to output the content of a file in the sdcard as escape chars
@@ -89,7 +91,9 @@ void repeat(int times)
 {
   //Won't repeat a REPEAT
   if (lastLine.startsWith("REPEAT "))
+  {
     return;
+  }
   for (int i = 0; i < times; i++)
   {
     parseLine(lastLine);
