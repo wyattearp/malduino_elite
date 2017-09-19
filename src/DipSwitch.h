@@ -11,11 +11,10 @@
 
 class DipSwitch
 {
-  public:
-    DipSwitch(void);
-    int getDips(void);
-    String getDipsString(void);
-    
+public:
+  DipSwitch(void);
+  int getDips(void);
+  String getDipsString(void);
 };
 
 #endif

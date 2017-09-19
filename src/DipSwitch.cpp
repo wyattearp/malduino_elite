@@ -1,15 +1,16 @@
-
 #include "DipSwitch.h"
-  
-DipSwitch::DipSwitch() {
-    pinMode(dip1, INPUT_PULLUP);
-    pinMode(dip2, INPUT_PULLUP);
-    pinMode(dip3, INPUT_PULLUP);
-    pinMode(dip4, INPUT_PULLUP);
+
+DipSwitch::DipSwitch()
+{
+  pinMode(dip1, INPUT_PULLUP);
+  pinMode(dip2, INPUT_PULLUP);
+  pinMode(dip3, INPUT_PULLUP);
+  pinMode(dip4, INPUT_PULLUP);
 }
 
 //dip switch 1 is the most significant bit and dip switch 4 the least
-int DipSwitch::getDips(void) {
+int DipSwitch::getDips(void)
+{
   int result = 0;
   result += !digitalRead(dip1);
   result <<= 1;
@@ -21,9 +22,10 @@ int DipSwitch::getDips(void) {
   return result;
 }
 
-String DipSwitch::getDipsString(void) {
-  String result = String(getDips(),BIN);
-  for (int i = result.length(); i < 4; i++) result = "0"+result;
+String DipSwitch::getDipsString(void)
+{
+  String result = String(getDips(), BIN);
+  for (int i = result.length(); i < 4; i++)
+    result = "0" + result;
   return result;
 }
-
