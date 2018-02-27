@@ -90,20 +90,18 @@
 #define PRINTSCREEN 206
 
 //  Low level key report: up to 6 keys and shift, ctrl etc at once
-typedef struct
-{
+typedef struct {
   uint8_t modifiers;
   uint8_t reserved;
   uint8_t keys[6];
 } KeyReport;
 
-class Keyboard_ : public Print
-{
-private:
+class Keyboard_ : public Print {
+ private:
   KeyReport _keyReport;
   void sendReport(KeyReport *keys);
 
-public:
+ public:
   Keyboard_(void);
   void begin(void);
   void end(void);

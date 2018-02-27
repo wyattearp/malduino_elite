@@ -1,86 +1,71 @@
 #include "ScriptHandler.h"
 #include "Debug.h"
 
+ScriptHandler::ScriptHandler(void) {}
 
-ScriptHandler::ScriptHandler(void)
-{
-
+void ScriptHandler::SetKeyboard(Keyboard_ *keyboard) {
+  this->ourKeyboard = keyboard;
 }
 
-void ScriptHandler::SetKeyboard(Keyboard_ *keyboard)
-{
-    this->ourKeyboard = keyboard;
+void ScriptHandler::SetKeypressDelay(unsigned long delay_ms) {
+  this->keypressDelay = delay_ms;
 }
 
-void ScriptHandler::SetKeypressDelay(unsigned long delay_ms)
-{
-    this->keypressDelay = delay_ms;
-}
-
-inline void ScriptHandler::WriteCharacter(uint8_t c)
-{
+inline void ScriptHandler::WriteCharacter(uint8_t c) {
   ourKeyboard->press(c);
   delay(keypressDelay);
   ourKeyboard->release(c);
 }
 
-void ScriptHandler::WriteString(String s)
-{
-  for (unsigned int i = 0; i < s.length(); i++)
-  {
+void ScriptHandler::WriteString(String s) {
+  for (unsigned int i = 0; i < s.length(); i++) {
     WriteCharacter(s.charAt(i));
   }
 }
 
-//Simple function to output the content of a file in the sdcard as escape chars
-//For example, in linux you can use ' echo -n -e "\xAA\xBB\XCC" > /tmp/file '
-void ScriptHandler::EchoFileHex(String sdFileName)
+// Simple function to output the content of a file in the sdcard as escape chars
+// For example, in linux you can use ' echo -n -e "\xAA\xBB\XCC" > /tmp/file '
+void ScriptHandler::EchoFileHex(String sdFileName) {
+  return;
+  /*
+DEBUG_PRINT("echoFileHex: Opening file '" + sdFileName + "'");
+fromSD = SD.open(sdFileName);
+if (!fromSD)
 {
-    return;
-    /*
-  DEBUG_PRINT("echoFileHex: Opening file '" + sdFileName + "'");
-  fromSD = SD.open(sdFileName);
-  if (!fromSD)
+  DEBUG_PRINT("echoFileHex: Couldn't find file: '" + sdFileName + "'");
+  return;
+}
+else
+{
+  while (fromSD.available())
   {
-    DEBUG_PRINT("echoFileHex: Couldn't find file: '" + sdFileName + "'");
-    return;
-  }
-  else
-  {
-    while (fromSD.available())
+    int c = fromSD.read();
+    String hex = String(c, HEX);
+    if (hex.length() > 1)
     {
-      int c = fromSD.read();
-      String hex = String(c, HEX);
-      if (hex.length() > 1)
-      {
-        WriteCharacterString("\\x" + hex);
-      }
-      else
-      {
-        WriteCharacterString("\\x0" + hex);
-      }
+      WriteCharacterString("\\x" + hex);
     }
-    fromSD.close();
+    else
+    {
+      WriteCharacterString("\\x0" + hex);
+    }
   }
-  */
+  fromSD.close();
+}
+*/
 }
 
-void ScriptHandler::RepeatLastLine(int times)
-{
-  //Won't repeat a REPEAT
-  if (lastLine.startsWith("REPEAT "))
-  {
+void ScriptHandler::RepeatLastLine(int times) {
+  // Won't repeat a REPEAT
+  if (lastLine.startsWith("REPEAT ")) {
     return;
   }
-  for (int i = 0; i < times; i++)
-  {
+  for (int i = 0; i < times; i++) {
     ParseLine(lastLine);
   }
 }
 
-void ScriptHandler::ParseLine(String line)
-{
-
+void ScriptHandler::ParseLine(String line) {
   if (line.startsWith("REM "))
     return;
   else if (line.startsWith("DEFAULTDELAY "))
@@ -107,8 +92,7 @@ void ScriptHandler::ParseLine(String line)
   lastLine = line;
 }
 
-void ScriptHandler::ParseKeys(String keys)
-{
+void ScriptHandler::ParseKeys(String keys) {
   String key;
   String nextKeys = keys;
   int p;
@@ -117,8 +101,7 @@ void ScriptHandler::ParseKeys(String keys)
 
   nextKeys.trim();
   p = nextKeys.indexOf(" ");
-  while (p > 0)
-  {
+  while (p > 0) {
     key = nextKeys.substring(0, p);
     nextKeys = nextKeys.substring(p + 1);
     key.trim();
@@ -130,8 +113,7 @@ void ScriptHandler::ParseKeys(String keys)
   ParseKey(nextKeys);
 }
 
-void ScriptHandler::ParseKey(String key)
-{
+void ScriptHandler::ParseKey(String key) {
   DEBUG_PRINT("ParseKey: '" + key + "'");
 
   if (key.length() == 1)

@@ -1,23 +1,26 @@
-/* 
+/*
  * Malduino Elite rewrite by kripthor
- * 
+ *
  * original work by Seytonic and Spacehuhn,  see malduino.com
  *
- * Check Keyboard.cpp for correct keyboard map and go to https://github.com/Nurrl/LocaleKeyboard.js for other maps 
+ * Check Keyboard.cpp for correct keyboard map and go to
+ * https://github.com/Nurrl/LocaleKeyboard.js for other maps
  *
  */
 
-#include <SPI.h>
 #include <SD.h>
+#include <SPI.h>
 #include "Debug.h"
-#include "Keyboard.h"
 #include "DipSwitch.h"
+#include "Keyboard.h"
 #include "ScriptHandler.h"
 
-#define CSPIN 4 //Chip-Select of the SD-Card reader
+#define CSPIN 4  // Chip-Select of the SD-Card reader
 #define ledPin 3
 #define blinkInterval 50
-#define MULTI_SCRIPT_RUN_SEQ 0xF  // dip = 1111 means we'll run everything script in order until we hit an error
+#define MULTI_SCRIPT_RUN_SEQ \
+  0xF  // dip = 1111 means we'll run everything script in order until we hit an
+       // error
 
 void searchAndRunScript();
 
@@ -29,27 +32,24 @@ ScriptHandler sc;
 
 int defaultDelay = 5;
 int defaultCharDelay = 5;
+uint32_t maxBlinks = 1024;
+uint32_t blinks = 0;
 int lastDip = -1;
 bool ledOn = true;
 
-void searchAndRunScript()
-{
+void searchAndRunScript() {
   String scriptName = dip.getDipsString() + ".txt";
 
   payload = SD.open(scriptName);
-  if (!payload)
-  {
+  if (!payload) {
     DEBUG_PRINT("setup: not found '" + scriptName + "'");
     return;
-  }
-  else
-  {
+  } else {
     DEBUG_PRINT("setup: found script '" + scriptName + "'");
 
     String line;
     Keyboard.begin();
-    while (payload.available())
-    {
+    while (payload.available()) {
       line = payload.readStringUntil('\n');
       line.trim();
       sc.ParseLine(line);
@@ -60,8 +60,7 @@ void searchAndRunScript()
   }
 }
 
-void setup()
-{
+void setup() {
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, HIGH);
 
@@ -74,28 +73,27 @@ void setup()
   }
 #endif
 
-  if (!SD.begin(CSPIN))
-  {
+  if (!SD.begin(CSPIN)) {
     DEBUG_PRINT("setup: couldn't access sd-card");
     return;
   }
 }
 
-void loop()
-{
-  //In the event that you can switch dips while connected to usb,
-  //the malduino will execute the script of the new dip configuration
-  if (lastDip != dip.getDips())
-  {
+void loop() {
+  // In the event that you can switch dips while connected to usb,
+  // the malduino will execute the script of the new dip configuration
+  if (lastDip != dip.getDips()) {
     lastDip = dip.getDips();
     searchAndRunScript();
   }
 
-  //Flash fast when script ends
-  else
-  {
-    ledOn = !ledOn;
-    digitalWrite(ledPin, ledOn);
-    delay(blinkInterval);
+  // Flash fast when script ends
+  else {
+    while (blinks < maxBlinks) {
+      ledOn = !ledOn;
+      digitalWrite(ledPin, ledOn);
+      delay(blinkInterval);
+      blinks++;
+    }
   }
 }
