@@ -2,6 +2,11 @@
 #include "Debug.h"
 
 
+ScriptHandler::ScriptHandler(void)
+{
+
+}
+
 void ScriptHandler::SetKeyboard(Keyboard_ *keyboard)
 {
     this->ourKeyboard = keyboard;
